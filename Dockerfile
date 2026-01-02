@@ -1,4 +1,20 @@
-FROM openjdk:8
-EXPOSE 8080
-ADD target/devops-integration.jar devops-integration.jar
-ENTRYPOINT ["java","-jar","/devops-integration.jar"]
+# Base image
+FROM node:18-alpine
+
+# Set working directory inside container
+WORKDIR /app
+
+# Copy package files first (for Docker cache optimization)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --production
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose application port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "start"]
